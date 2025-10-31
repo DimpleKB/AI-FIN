@@ -19,10 +19,11 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback){
-    if(!origin) return callback(null, true); // allow mobile apps, curl, etc.
+    // allow non-browser tools like Postman or curl
+    if(!origin) return callback(null, true);
+
     if(allowedOrigins.indexOf(origin) === -1){
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+      return callback(new Error("CORS not allowed"), false);
     }
     return callback(null, true);
   },
