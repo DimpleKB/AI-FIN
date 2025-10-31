@@ -12,14 +12,23 @@ dotenv.config();
 const app = express();
 const port = 5000;
 
+const allowedOrigins = [
+  'http://localhost:5173',          // for local dev
+  'https://your-frontend-domain.com' // your deployed frontend
+];
+
 app.use(cors({
-  origin: [
-    "https://finai-frontend.onrender.com", // <-- replace with your actual frontend Render URL
-    "http://localhost:5173",               // local dev
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // allow mobile apps, curl, etc.
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
 }));
+
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 

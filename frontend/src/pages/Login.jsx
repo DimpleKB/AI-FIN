@@ -11,11 +11,7 @@ function Login() {
   const { setUser, setCurrentUserId } = useUser();
 
   // Detect environment: local dev or deployed frontend
-  const API_BASE_URL =
-    process.env.NODE_ENV === "production"
-      ? "https://backend-nk1t.onrender.com"
-      : "http://localhost:5000";
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
