@@ -21,11 +21,12 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/login`, {
+      const res = await fetch("https://backend-nk1t.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: username, password }),
       });
+
 
       const data = await res.json().catch(() => ({}));
 
