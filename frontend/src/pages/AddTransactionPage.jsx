@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Tesseract from "tesseract.js";
 import { useTheme } from "../context/ThemeContext";
-import PageContainer from "../components/PageContainer";
 
 const AddTransactionPage = () => {
   const { darkMode } = useTheme();
@@ -54,7 +53,6 @@ const AddTransactionPage = () => {
   };
 
   return (
-    <PageContainer>
     <div style={styles.pageContainer}>
       <Sidebar />
       <div style={{ ...styles.mainContent(darkMode) }}>
@@ -112,7 +110,6 @@ const AddTransactionPage = () => {
         </div>
       </div>
     </div>
-    </PageContainer>
   );
 };
 

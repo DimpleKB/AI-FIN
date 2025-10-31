@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useUser } from "../context/UserContext";
 import { useTheme } from "../context/ThemeContext";
-import PageContainer from "../components/PageContainer";
 
 const BudgetPage = () => {
   const { darkMode } = useTheme();

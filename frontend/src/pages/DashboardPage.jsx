@@ -5,7 +5,6 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, RadialBarChart, RadialBar, AreaChart, Area
 } from "recharts";
-import PageContainer from "../components/PageContainer";
 
 const DashboardPage = () => {
   const { darkMode } = useTheme();
