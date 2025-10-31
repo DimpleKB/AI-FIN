@@ -12,7 +12,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 10000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://finai-frontend.onrender.com", // <-- replace with your actual frontend Render URL
+    "http://localhost:5173",               // local dev
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
