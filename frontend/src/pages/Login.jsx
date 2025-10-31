@@ -1,60 +1,64 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import { useUser } from "../context/UserContext";
+import { API_BASE_URL } from "../config";
 function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser, setCurrentUserId } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      const res = await fetch("/login", {
+      const res = await fetch("https://backend-nk1t.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: username, password }),
       });
+
+
       const data = await res.json();
+
       if (res.ok) {
-        localStorage.setItem("userId", data.userId);
+        setUser({ email: data.email, userId: data.userId });
+        setCurrentUserId(data.userId);
         alert("✅ Login successful!");
         navigate("/homepage");
-      } else alert(data.message || "Login failed");
+      } else {
+        alert(data.message);
+      }
     } catch (err) {
-      alert("❌ Server error");
-    } finally { setLoading(false); }
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   return (
-    <div style={{
-        minHeight: "100vh",
-        width: "100%",
-        background: darkMode ? "#121212" : "#f9fafb",
-        color: darkMode ? "#e0e0e0" : "#333",
-        padding: "20px",
-        boxSizing: "border-box",
-        marginLeft: window.innerWidth > 768 ? "260px" : "0", // account for sidebar
-        transition: "all 0.3s", }}>
-    <div style={formContainerStyle}>
-      <form onSubmit={handleSubmit} style={formStyle}>
-        <h2>Login</h2>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required style={inputStyle} />
-        <button type="submit" disabled={loading} style={buttonStyle}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-        <p style={{ textAlign: "center" }}>Don't have an account? <Link to="/signup">Signup</Link></p>
+    <div className="container">
+      <h2>Login</h2>
+      <form className="frm" onSubmit={handleSubmit}>
+        <p>Email</p>
+        <input
+          type="text"
+          placeholder="Email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <p>Password</p>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button className="submit" type="submit">Login</button>
+        <p>Don't have an account? <Link to="/signup">Signup</Link></p>
       </form>
     </div>
-      </div>
   );
 }
-
-const formContainerStyle = { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "20px" };
-const formStyle = { width: "100%", maxWidth: "400px", padding: "25px", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" };
-const inputStyle = { padding: "12px", margin: "10px 0", borderRadius: "8px", border: "1px solid #ccc", width: "100%" };
-const buttonStyle = { padding: "12px", borderRadius: "8px", border: "none", background: "#236fbc", color: "#fff", width: "100%", cursor: "pointer" };
 
 export default Login;
