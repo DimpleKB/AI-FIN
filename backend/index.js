@@ -366,12 +366,13 @@ app.post("/api/totalBudget/:userId", async (req, res) => {
 
 // API routes
 
+app.get("/", (req, res) => res.send("🚀 Backend running"));
 
-// Serve React app for any other route
+// Catch-all: Serve React app for any other route (if frontend is built here)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist","index.html"));
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-app.listen(port, () =>
-  console.log(`✅ Server running at http://localhost:${port}`)
-);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${port}`);
+});
