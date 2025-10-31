@@ -17,6 +17,7 @@ const allowedOrigins = [
   'https://frontend-1mk4.onrender.com' // your deployed frontend
 ];
 
+
 app.use(cors({
   origin: function(origin, callback){
     if(!origin) return callback(null, true);  // allow non-browser tools
@@ -28,12 +29,13 @@ app.use(cors({
   credentials: true
 }));
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist")));
 app.use("/uploads", express.static("uploads"));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "dist")));
 
 const { Pool } = pkg;
