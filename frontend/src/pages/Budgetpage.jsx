@@ -28,9 +28,9 @@ const BudgetPage = () => {
     const fetchData = async () => {
       try {
         const [budRes, transRes, totalRes] = await Promise.all([
-          fetch(`/api/budgets/${userId}`),
-          fetch(`/api/transactions/${userId}`),
-          fetch(`/api/totalBudget/${userId}`),
+          fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}`),
+          fetch(`https://backend-nk1t.onrender.com/api/transactions/${userId}`),
+          fetch(`https://backend-nk1t.onrender.com/api/totalBudget/${userId}`),
         ]);
 
         const budgetsData = await budRes.json();
@@ -80,7 +80,7 @@ const BudgetPage = () => {
   const handleAddBudget = async () => {
     if (!form.category || !form.amount) return alert("All fields are required!");
     try {
-      const res = await fetch(`/api/budgets/${userId}`, {
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -102,7 +102,7 @@ const BudgetPage = () => {
     if (!totalBudgetInput) return alert("Enter total budget!");
     try {
       const res = await fetch(
-        `/api/totalBudget/${userId}`,
+        `https://backend-nk1t.onrender.com/api/totalBudget/${userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ const BudgetPage = () => {
   // Delete budget
   const handleDeleteBudget = async (id) => {
     try {
-      await fetch(`/api/budgets/${userId}/${id}`, {
+      await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}/${id}`, {
         method: "DELETE",
       });
       setBudgets(budgets.filter((b) => b.id !== id));
@@ -140,7 +140,7 @@ const BudgetPage = () => {
   const handleSaveBudget = async (id) => {
     if (!editForm.category || !editForm.amount) return alert("All fields are required!");
     try {
-      const res = await fetch(`/api/budgets/${userId}/${id}`, {
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

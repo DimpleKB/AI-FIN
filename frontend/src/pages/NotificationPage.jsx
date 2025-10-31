@@ -65,7 +65,7 @@ const NotificationPage = () => {
   // Fetch transactions
   const fetchTransactions = async () => {
     try {
-      const res = await fetch(`/api/transactions/${userId}`);
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/transactions/${userId}`);
       const data = await res.json();
       setTransactions(data);
     } catch (err) {
@@ -76,7 +76,7 @@ const NotificationPage = () => {
   // Fetch total budget
   const fetchTotalBudget = async () => {
     try {
-      const res = await fetch(`/api/totalBudget/${userId}`);
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/totalBudget/${userId}`);
       const data = await res.json();
       setTotalBudget(data.totalBudget || 0);
     } catch (err) {

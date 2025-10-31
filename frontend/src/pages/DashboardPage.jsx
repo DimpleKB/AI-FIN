@@ -33,7 +33,7 @@ const DashboardPage = () => {
 
     const fetchTransactions = async () => {
       try {
-        const res = await fetch(`/api/transactions/${userId}`);
+        const res = await fetch(`https://backend-nk1t.onrender.com/api/transactions/${userId}`);
         if (!res.ok) throw new Error("Failed to fetch transactions");
         const data = await res.json();
         setTransactions(data);

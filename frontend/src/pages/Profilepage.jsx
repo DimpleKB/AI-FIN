@@ -20,7 +20,7 @@ function ProfilePage() {
   // Fetch user if not loaded
   useEffect(() => {
     if (!user?.username && currentUserId) {
-      fetch(`/api/user/${currentUserId}`)
+      fetch(`https://backend-nk1t.onrender.com/api/user/${currentUserId}`)
         .then(res => res.json())
         .then(data => {
           setUser(data);
@@ -66,7 +66,7 @@ function ProfilePage() {
 
     try {
       setSaving(true);
-      const res = await fetch(`/api/user/${currentUserId}`, {
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/user/${currentUserId}`, {
         method: "PUT",
         body: formData,
       });
@@ -92,14 +92,14 @@ function ProfilePage() {
       const consentId = "sandbox_consent_" + Date.now(); // simulate sandbox consent
 
       // Save consent in backend
-      await fetch(`/api/bank/connect/${user.id}`, {
+      await fetch(`https://backend-nk1t.onrender.com/api/bank/connect/${user.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bankName, consentId }),
       });
 
       // Fetch transactions automatically
-      const res = await fetch(`/api/bank/fetch-transactions/${user.id}`, {
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/bank/fetch-transactions/${user.id}`, {
         method: "POST",
       });
       const data = await res.json();
