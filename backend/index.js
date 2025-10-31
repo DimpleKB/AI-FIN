@@ -34,6 +34,10 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }, // required for Render's managed Postgres
 });
 
+pool.connect()
+  .then(() => console.log("✅ Connected to Postgres"))
+  .catch(err => console.error("❌ DB Connection Error:", err.message));
+
 
 // ----------------- Multer for Profile Pictures -----------------
 const storage = multer.diskStorage({
