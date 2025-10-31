@@ -29,6 +29,15 @@ function Signup() {
   };
 
   return (
+    <div style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: darkMode ? "#121212" : "#f9fafb",
+        color: darkMode ? "#e0e0e0" : "#333",
+        padding: "20px",
+        boxSizing: "border-box",
+        marginLeft: window.innerWidth > 768 ? "260px" : "0", // account for sidebar
+        transition: "all 0.3s", }}>
     <div style={formContainerStyle}>
       <form onSubmit={handleSubmit} style={formStyle}>
         <h2>Signup</h2>
@@ -39,6 +48,7 @@ function Signup() {
         <button type="submit" style={buttonStyle}>Signup</button>
         <p style={{ textAlign: "center" }}>Have an account? <Link to="/login">Login</Link></p>
       </form>
+    </div>
     </div>
   );
 }

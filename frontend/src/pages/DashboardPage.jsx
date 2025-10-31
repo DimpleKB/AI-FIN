@@ -5,6 +5,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, RadialBarChart, RadialBar, AreaChart, Area
 } from "recharts";
+import PageContainer from "../components/PageContainer";
 
 const DashboardPage = () => {
   const { darkMode } = useTheme();
@@ -115,7 +116,15 @@ const DashboardPage = () => {
   };
 
   return (
-    <div style={{ display: "flex", width: "100vw", minHeight: "100vh", fontFamily: "Arial, sans-serif" }}>
+    <div style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: darkMode ? "#121212" : "#f9fafb",
+        color: darkMode ? "#e0e0e0" : "#333",
+        padding: "20px",
+        boxSizing: "border-box",
+        marginLeft: window.innerWidth > 768 ? "260px" : "0", // account for sidebar
+        transition: "all 0.3s", }}>
       <Sidebar />
       <div style={{
         flex: 1,

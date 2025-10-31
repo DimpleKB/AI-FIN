@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Tesseract from "tesseract.js";
 import { useTheme } from "../context/ThemeContext";
+import PageContainer from "../components/PageContainer";
 
 const AddTransactionPage = () => {
   const { darkMode } = useTheme();
@@ -53,15 +54,7 @@ const AddTransactionPage = () => {
   };
 
   return (
-    <div style={{
-  flex: 1,
-  padding: "20px",
-  marginLeft: window.innerWidth > 768 ? "260px" : "0",
-  background: darkMode ? "#121212" : "#f9fafb",
-  color: darkMode ? "#e0e0e0" : "#333",
-  minHeight: "100vh",
-  overflowY: "auto"
-}}>
+    <PageContainer>
     <div style={styles.pageContainer}>
       <Sidebar />
       <div style={{ ...styles.mainContent(darkMode) }}>
@@ -119,7 +112,7 @@ const AddTransactionPage = () => {
         </div>
       </div>
     </div>
-    </div>
+    </PageContainer>
   );
 };
 

@@ -7,6 +7,7 @@ import { useUser } from "../context/UserContext";
 import { useTheme } from "../context/ThemeContext";
 import SummaryCard from "../components/SummaryCard";
 
+
 const HomePage = () => {
   const { darkMode } = useTheme();
   const { user } = useUser();
@@ -117,8 +118,16 @@ const HomePage = () => {
   const types = ["income", "expense"];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
-      <Sidebar darkMode />
+<div style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: darkMode ? "#121212" : "#f9fafb",
+        color: darkMode ? "#e0e0e0" : "#333",
+        padding: "20px",
+        boxSizing: "border-box",
+        marginLeft: window.innerWidth > 768 ? "260px" : "0", // account for sidebar
+        transition: "all 0.3s", }}>
+                <Sidebar darkMode />
       <div style={{
         flex: 1,
         padding: "20px",
