@@ -1,23 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-// import { API_BASE_URL } from "../config";
+
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setUser, setCurrentUserId } = useUser();
 
+  // Detect environment: local dev or deployed frontend
+  const API_BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://backend-nk1t.onrender.com"
+      : "http://localhost:5000";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      const res = await fetch(`https://backend-nk1t.onrender.com/login`, {
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
         setUser({ email: data.email, userId: data.userId });
@@ -25,11 +34,13 @@ function Login() {
         alert("✅ Login successful!");
         navigate("/homepage");
       } else {
-        alert(data.message);
+        alert(data.message || "⚠️ Login failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Server error");
+      console.error("Login error:", err);
+      alert("❌ Server error or network issue");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,12 +50,13 @@ function Login() {
       <form className="frm" onSubmit={handleSubmit}>
         <p>Email</p>
         <input
-          type="text"
+          type="email"
           placeholder="Email"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
+
         <p>Password</p>
         <input
           type="password"
@@ -53,8 +65,14 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className="submit" type="submit">Login</button>
-        <p>Don't have an account? <Link to="/signup">Signup</Link></p>
+
+        <button className="submit" type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        <p>
+          Don't have an account? <Link to="/signup">Signup</Link>
+        </p>
       </form>
     </div>
   );
