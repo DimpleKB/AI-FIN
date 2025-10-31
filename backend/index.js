@@ -14,7 +14,7 @@ const port = process.env.PORT || 10000;
 
 app.use(cors({
   origin: [
-    "https://finai-frontend.onrender.com",
+    "https://frontend-1mk4.onrender.com",
     "http://localhost:5173",
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
