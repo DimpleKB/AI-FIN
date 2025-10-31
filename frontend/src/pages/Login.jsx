@@ -10,19 +10,17 @@ function Login() {
   const navigate = useNavigate();
   const { setUser, setCurrentUserId } = useUser();
 
-  // Detect environment: local dev or deployed frontend
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch("https://backend-nk1t.onrender.com/login", {
+      // Use API_BASE_URL from config to support both dev and production
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, password }),
+        body: JSON.stringify({ email, password }), // fixed typo (was "username")
       });
-
 
       const data = await res.json().catch(() => ({}));
 

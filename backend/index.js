@@ -14,7 +14,7 @@ const port = 5000;
 
 const allowedOrigins = [
   'http://localhost:5173',          // for local dev
-  'https://your-frontend-domain.com' // your deployed frontend
+  'https://frontend-1mk4.onrender.com' // your deployed frontend
 ];
 
 app.use(cors({

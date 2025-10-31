@@ -1,1 +1,5 @@
-export const API_BASE_URL = "https://backend-nk1t.onrender.com";
+// config.js
+export const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://backend-nk1t.onrender.com"
+    : "http://localhost:5000";
