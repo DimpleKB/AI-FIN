@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useTheme } from "../context/ThemeContext";
@@ -8,7 +8,7 @@ const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { darkMode } = useTheme();
-  const [isOpen, setIsOpen] = useState(false); // mobile toggle
+  const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
 
   const items = [
     { name: "Home", icon: "🏠", path: "/homepage" },
@@ -30,27 +30,36 @@ const Sidebar = () => {
   const profileBorder = darkMode ? "#64b5f6" : "#42a5f5";
   const logoutColor = darkMode ? "#ef5350" : "#e53935";
 
+  // Close sidebar on window resize if mobile
+  useEffect(() => {
+    const handleResize = () => setIsOpen(window.innerWidth > 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       {/* Mobile toggle */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: "fixed",
-          top: 15,
-          left: 15,
-          zIndex: 110,
-          padding: "10px",
-          borderRadius: "8px",
-          border: "none",
-          background: darkMode ? "#64b5f6" : "#0d47a1",
-          color: "#fff",
-          fontWeight: "600",
-          cursor: "pointer",
-        }}
-      >
-        ☰
-      </button>
+      {window.innerWidth <= 768 && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            position: "fixed",
+            top: 15,
+            left: 15,
+            zIndex: 110,
+            padding: "10px",
+            borderRadius: "8px",
+            border: "none",
+            background: darkMode ? "#64b5f6" : "#0d47a1",
+            color: "#fff",
+            fontWeight: "600",
+            cursor: "pointer",
+          }}
+        >
+          ☰
+        </button>
+      )}
 
       <div
         style={{
@@ -59,6 +68,8 @@ const Sidebar = () => {
           color: linkDefault,
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 0.3s ease",
+          position: window.innerWidth <= 768 ? "fixed" : "fixed",
+          zIndex: 100,
         }}
       >
         <div>
@@ -83,7 +94,7 @@ const Sidebar = () => {
                 background: location.pathname === item.path ? linkActive : "transparent",
                 color: location.pathname === item.path ? (darkMode ? "#121212" : "black") : linkDefault,
               }}
-              onClick={() => setIsOpen(false)}
+              onClick={() => window.innerWidth <= 768 && setIsOpen(false)}
             >
               <span style={{ marginRight: "12px", fontSize: "18px" }}>{item.icon}</span>
               {item.name}
@@ -102,7 +113,6 @@ const Sidebar = () => {
   );
 };
 
-// Styles
 const sidebarStyle = {
   height: "100vh",
   width: "260px",
@@ -110,10 +120,8 @@ const sidebarStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  position: "fixed",
   top: 0,
   left: 0,
-  zIndex: 100,
   boxShadow: "2px 0 10px rgba(0,0,0,0.3)",
   fontFamily: "Poppins, sans-serif",
 };
