@@ -10,10 +10,7 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirm) {
-      alert("❌ Passwords do not match!");
-      return;
-    }
+    if (password !== confirm) return alert("Passwords do not match!");
     try {
       const res = await fetch("/signup", {
         method: "POST",
@@ -22,61 +19,33 @@ function Signup() {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem("userId", data.userId); // ✅ store userId
-        alert("✅ Signup successful! You are now logged in.");
+        localStorage.setItem("userId", data.userId);
+        alert("✅ Signup successful!");
         navigate("/homepage");
-      } else {
-        alert(data.message);
-      }
+      } else alert(data.message);
     } catch (err) {
-      console.error(err);
       alert("❌ Server error");
     }
   };
 
   return (
-    <div className="container">
-      <h2>Signup</h2>
-      <form onSubmit={handleSubmit} className="frm">
-        <p>Username</p>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <p>Email</p>
-        <input
-          type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <p>Password</p>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <p>Confirm Password</p>
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          required
-        />
-        <button className="submit" type="submit">Signup</button>
-        <p style={{ textAlign: "center" }}>
-          Have an account? <Link to="/login">Login</Link>
-        </p>
+    <div style={formContainerStyle}>
+      <form onSubmit={handleSubmit} style={formStyle}>
+        <h2>Signup</h2>
+        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required style={inputStyle} />
+        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} />
+        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required style={inputStyle} />
+        <input type="password" placeholder="Confirm Password" value={confirm} onChange={e => setConfirm(e.target.value)} required style={inputStyle} />
+        <button type="submit" style={buttonStyle}>Signup</button>
+        <p style={{ textAlign: "center" }}>Have an account? <Link to="/login">Login</Link></p>
       </form>
     </div>
   );
 }
+
+const formContainerStyle = { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "20px" };
+const formStyle = { width: "100%", maxWidth: "400px", padding: "25px", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" };
+const inputStyle = { padding: "12px", margin: "10px 0", borderRadius: "8px", border: "1px solid #ccc", width: "100%" };
+const buttonStyle = { padding: "12px", borderRadius: "8px", border: "none", background: "#236fbc", color: "#fff", width: "100%", cursor: "pointer" };
 
 export default Signup;

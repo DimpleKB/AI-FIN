@@ -22,7 +22,6 @@ const DashboardPage = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA336A", "#3399FF"];
 
-  // Fetch transactions on mount
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -47,7 +46,6 @@ const DashboardPage = () => {
     fetchTransactions();
   }, []);
 
-  // Process transactions to generate chart data and totals
   const processTransactions = (data) => {
     calculateTotals(data);
     prepareCharts(data);
@@ -122,7 +120,7 @@ const DashboardPage = () => {
       <div style={{
         flex: 1,
         padding: "20px",
-        marginLeft: "300px",
+        marginLeft: window.innerWidth > 768 ? "300px" : "0",
         background: darkMode ? "#121212" : "#f9fafb",
         color: darkMode ? "#e0e0e0" : "#333",
         overflowY: "auto"
@@ -131,14 +129,24 @@ const DashboardPage = () => {
         <p style={{ color: "#555" }}>AI-powered insights into your income, expenses, and savings patterns.</p>
 
         {/* Summary Cards */}
-        <div style={{ display: "flex", gap: "20px", marginTop: "20px", marginBottom: "20px" }}>
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "15px",
+          marginTop: "20px",
+          marginBottom: "20px",
+        }}>
           <SummaryCard title="Total Income" value={`₹${totals.income.toLocaleString()}`} color="#00C49F" />
           <SummaryCard title="Total Expenses" value={`₹${totals.expense.toLocaleString()}`} color="#FF8042" />
           <SummaryCard title="Net Balance" value={`₹${totals.balance.toLocaleString()}`} color={totals.balance >= 0 ? "#0088FE" : "#FF4C4C"} />
         </div>
 
         {/* Charts Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: window.innerWidth > 768 ? "1fr 1fr" : "1fr",
+          gap: "20px",
+        }}>
           <ChartCard title="Income vs Expense Trend" darkMode={darkMode}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={lineData}>
@@ -261,7 +269,7 @@ const DashboardPage = () => {
 // Reusable Components
 const SummaryCard = ({ title, value, color }) => (
   <div style={{
-    flex: 1, background: "#fff", padding: "15px 20px",
+    flex: "1 1 200px", background: "#fff", padding: "15px 20px",
     borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
   }}>
     <h4 style={{ color: "#555", marginBottom: "5px" }}>{title}</h4>
