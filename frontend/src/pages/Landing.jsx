@@ -1,51 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
 import "../App.css";
 
 function Landing() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <div className="App">
       {/* ✅ Navbar */}
       <header className="navbar">
         <div className="navbar-container">
           <h1 className="logo">AI Finance Tracker</h1>
-
-          {/* Hamburger Icon (mobile) */}
-          <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <FaTimes /> : <FaBars />}
+          <div className="auth-buttons">
+            <Link to="/login" className="btn-outline">Login</Link>
+            <Link to="/signup" className="btn-primary">Sign Up</Link>
           </div>
-
-          {/* Navigation Links */}
-          <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
-            <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
-            <a href="#how" onClick={() => setMenuOpen(false)}>How It Works</a>
-            <a href="#testimonials" onClick={() => setMenuOpen(false)}>Testimonials</a>
-            <div className="auth-buttons">
-              <Link to="/login" className="btn-outline" onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link to="/signup" className="btn-primary" onClick={() => setMenuOpen(false)}>Sign Up</Link>
-            </div>
-          </nav>
         </div>
       </header>
 
-      {/* ✅ Hero Section */}
+      {/* ✅ Hero Section with Background Image */}
       <section className="hero">
-        <div className="hero-content">
+        <div className="hero-overlay">
           <h1>Take Control of Your Money with AI</h1>
           <p>Smart insights, automated tracking, and personalized recommendations powered by AI.</p>
-          <div className="hero-buttons-wrapper">
-            <Link className="btn-primary" to="/signup">Get Started Free</Link>
-          </div>
-        </div>
-
-        <div className="hero-image">
-          <img
-            src="https://tse1.mm.bing.net/th/id/OIP.DHfAEOYUlR3MzcCHVA0THQHaEo?rs=1&pid=ImgDetMain&o=7&rm=3"
-            alt="AI Finance Illustration"
-          />
+          <Link className="btn-primary" to="/signup">Get Started Free</Link>
         </div>
       </section>
 
