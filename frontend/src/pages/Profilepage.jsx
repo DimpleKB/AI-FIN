@@ -1,51 +1,34 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useUser } from "../context/UserContext";
-import { useTheme } from "../context/ThemeContext.jsx";
+import { useTheme } from "../context/ThemeContext";
+import { Menu } from "lucide-react";
 
-function ProfilePage() {
+const ProfilePage = () => {
   const { user, setUser, currentUserId } = useUser();
-  const { darkMode, toggleDarkMode } = useTheme();
-
+  const { darkMode } = useTheme();
   const [file, setFile] = useState(null);
-  const [filePreview, setFilePreview] = useState(user?.profile_pic || "/default-avatar.png");
+  const [filePreview, setFilePreview] = useState("/default-avatar.png");
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(!user?.username);
+  const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  // Bank connection states
-  const [showBankModal, setShowBankModal] = useState(false);
-  const [bankName, setBankName] = useState("");
-
-  // Fetch user if not loaded
   useEffect(() => {
-    if (!user?.username && currentUserId) {
+    if (user && user.username) {
+      setFilePreview(user.profile_pic ? `/uploads/${user.profile_pic}` : "/default-avatar.png");
+      setLoading(false);
+    } else if (currentUserId) {
       fetch(`https://backend-nk1t.onrender.com/api/user/${currentUserId}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setUser(data);
           setFilePreview(data.profile_pic ? `/uploads/${data.profile_pic}` : "/default-avatar.png");
           setLoading(false);
         })
-        .catch(err => {
-          console.error(err);
-          setLoading(false);
-        });
+        .catch(() => setLoading(false));
     }
   }, [user, currentUserId, setUser]);
-
-  // Update preview when user changes
-  useEffect(() => {
-    setFilePreview(user?.profile_pic ? `/uploads/${user.profile_pic}` : "/default-avatar.png");
-  }, [user]);
-
-  if (loading) return <div>Loading user data...</div>;
-
-  // ===== Handlers =====
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser(prev => ({ ...prev, [name]: value }));
-  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -57,141 +40,187 @@ function ProfilePage() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSave = async () => {
     const formData = new FormData();
-    if (user.username) formData.append("username", user.username);
-    if (user.email) formData.append("email", user.email);
-    if (password.trim()) formData.append("password", password);
+    formData.append("username", user.username);
+    formData.append("email", user.email);
+    if (password) formData.append("password", password);
     if (file) formData.append("profilePic", file);
 
     try {
       setSaving(true);
-      const res = await fetch(`https://backend-nk1t.onrender.com/api/user/${currentUserId}`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      const updated = await res.json();
-      if (!res.ok) throw new Error(updated.message || "Failed to save");
-
-      setUser(updated.user);
-      setFile(null);
+      setMessage("");
+      const res = await fetch(
+        `https://backend-nk1t.onrender.com/api/user/${currentUserId}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      setUser(data.user);
+      setMessage("✅ Profile updated successfully!");
       setPassword("");
-      alert("✅ Profile updated!");
+      setFile(null);
     } catch (err) {
-      console.error(err);
-      alert("❌ Failed: " + err.message);
+      setMessage("❌ Failed to update profile: " + err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  // ===== Bank connect =====
-  const handleBankConnect = async (bankName) => {
-    try {
-      const consentId = "sandbox_consent_" + Date.now(); // simulate sandbox consent
-
-      // Save consent in backend
-      await fetch(`/api/bank/connect/${user.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bankName, consentId }),
-      });
-
-      // Fetch transactions automatically
-      const res = await fetch(`https://backend-nk1t.onrender.com/api/bank/fetch-transactions/${user.id}`, {
-        method: "POST",
-      });
-      const data = await res.json();
-
-      alert(`✅ Bank connected! Fetched ${data.count} transactions.`);
-      setShowBankModal(false);
-      setBankName("");
-    } catch (err) {
-      console.error(err);
-      alert("❌ Failed to connect bank");
-    }
-  };
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "80px", fontSize: "18px" }}>
+        Loading user profile...
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar darkMode={darkMode} />
-      <div style={{ flex: 1, padding: "30px", maxWidth: "800px", marginLeft: "300px" }}>
-        <div style={{ ...cardStyle, background: darkMode ? "#2c2c3e" : "#fff", width: "1000px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ textAlign: "center", marginBottom: "20px", color: darkMode ? "#4fc3f7" : "#236fbc" }}>Profile</h2>
-            <button onClick={toggleDarkMode} style={modeBtnStyle}>
-              {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
-            </button>
-          </div>
+    <div style={{ display: "flex", minHeight: "100%", width: "100vw" }}>
+      <Sidebar />
+      <div
+        style={{
+          flex: 1,
+          padding: "40px 20px",
+          background: darkMode ? "#121212" : "#f9fafb",
+          color: darkMode ? "#e0e0e0" : "#333",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflowY: "auto",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "600px",
+            background: darkMode ? "#1f1f1f" : "#fff",
+            padding: "40px",
+            borderRadius: "12px",
+            boxShadow: darkMode
+              ? "0 10px 25px rgba(0,0,0,0.6)"
+              : "0 10px 25px rgba(0,0,0,0.08)",
+            borderTop: "4px solid #3498db",
+          }}
+        >
+          <h2
+            style={{
+              marginBottom: "30px",
+              textAlign: "center",
+              color: darkMode ? "#e0e0e0" : "#2c3e50",
+            }}
+          >
+            Profile Details
+          </h2>
 
+          {/* Avatar Upload */}
           <div style={{ textAlign: "center", marginBottom: "25px" }}>
             <img
               src={filePreview}
               alt="profile"
-              style={{ ...profileImgStyle, boxShadow: darkMode ? "0 0 15px #4fc3f7" : "0 4px 20px rgba(0,0,0,0.1)" }}
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid #3498db",
+                marginBottom: "10px",
+                boxShadow: darkMode
+                  ? "0 0 15px rgba(52,152,219,0.5)"
+                  : "0 2px 8px rgba(0,0,0,0.1)",
+              }}
             />
-            <input type="file" onChange={handleFileChange} style={fileInputStyle} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: "block", margin: "10px auto" }}
+            />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-            <label style={labelStyle}>
-              Username
-              <input type="text" name="username" value={user.username || ""} onChange={handleChange}
-                style={{ ...inputStyle, background: darkMode ? "#3b3b50" : "#fff", color: darkMode ? "#f0f0f0" : "#333" }}
-              />
-            </label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              value={user.username || ""}
+              onChange={handleChange}
+              style={inputStyle(darkMode)}
+            />
 
-            <label style={labelStyle}>
-              Email
-              <input type="email" name="email" value={user.email || ""} onChange={handleChange}
-                style={{ ...inputStyle, background: darkMode ? "#3b3b50" : "#fff", color: darkMode ? "#f0f0f0" : "#333" }}
-              />
-            </label>
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={user.email || ""}
+              onChange={handleChange}
+              style={inputStyle(darkMode)}
+            />
 
-            <label style={labelStyle}>
-              Password
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                style={{ ...inputStyle, background: darkMode ? "#3b3b50" : "#fff", color: darkMode ? "#f0f0f0" : "#333" }}
-                placeholder="Enter new password"
-              />
-            </label>
+            <label>New Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter new password"
+              style={inputStyle(darkMode)}
+            />
 
-            <button onClick={handleSave} disabled={saving} style={{ ...saveBtnStyle, background: darkMode ? "#4fc3f7" : "#236fbc" }}>
-              {saving ? "Saving..." : "Save Changes"}
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              style={saveBtn}
+            >
+              {saving ? "💾 Saving..." : "✅ Save Changes"}
             </button>
 
-            <p style={{ fontSize: "12px", textAlign: "center", color: darkMode ? "#aaa" : "#666" }}>
-              Last updated: {new Date().toLocaleString()}
-            </p>
+            {message && (
+              <p
+                style={{
+                  textAlign: "center",
+                  marginTop: "10px",
+                  color: message.startsWith("✅") ? "green" : "red",
+                }}
+              >
+                {message}
+              </p>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
-// ===== Styles =====
-const cardStyle = { borderRadius: "12px", padding: "30px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)", transition: "0.3s all" };
-const profileImgStyle = { width: "150px", height: "150px", borderRadius: "50%", objectFit: "cover", border: "4px solid #236fbc", marginBottom: "10px", transition: "0.3s all" };
-const fileInputStyle = { display: "block", margin: "10px auto 0" };
-const labelStyle = { display: "flex", flexDirection: "column", fontWeight: "600", color: "#333" };
-const inputStyle = { padding: "12px", borderRadius: "8px", border: "1px solid #ccc", marginTop: "5px", fontSize: "16px", outline: "none" };
-const saveBtnStyle = { padding: "12px", borderRadius: "8px", color: "#fff", fontWeight: "600", fontSize: "16px", cursor: "pointer", marginTop: "20px", border: "none", transition: "0.2s all" };
-const modeBtnStyle = { padding: "8px 15px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "500", background: "#f0f0f0", color: "#333" };
-const modalStyle = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  background: "#fff",
-  padding: "30px",
-  borderRadius: "12px",
-  boxShadow: "0 5px 20px rgba(0,0,0,0.3)",
-  zIndex: 1000,
-  minWidth: "300px",
-  textAlign: "center",
+// === Styles ===
+const inputStyle = (dark) => ({
+  padding: "12px 15px",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  width: "100%",
+  fontSize: "14px",
+  outline: "none",
+  background: dark ? "#2c2c2c" : "#fff",
+  color: dark ? "#e0e0e0" : "#333",
+});
+
+const saveBtn = {
+  background: "#3498db",
+  color: "#fff",
+  padding: "14px",
+  border: "none",
+  borderRadius: "10px",
+  cursor: "pointer",
+  fontSize: "16px",
+  fontWeight: "600",
 };
 
 export default ProfilePage;
-

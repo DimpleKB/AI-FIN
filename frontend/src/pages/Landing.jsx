@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
 
-function App() {
+function Landing() {
   return (
     <div className="App">
       {/* Navbar */}
+      
       <header className="navbar">
         <h1 className="logo">AI Finance Tracker</h1>
         <nav>
@@ -111,4 +112,4 @@ function App() {
   );
 }
 
-export default App;
+export default Landing;

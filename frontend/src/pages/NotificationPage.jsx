@@ -3,7 +3,6 @@ import Sidebar from "../components/Sidebar";
 import { FaExclamationTriangle, FaCheckCircle, FaMoneyBillWave } from "react-icons/fa";
 import { useTheme } from "../context/ThemeContext";
 
-// Notification Card Component
 const NotificationCard = ({ notification, darkMode }) => {
   const bgColor =
     notification.type === "danger"
@@ -29,7 +28,9 @@ const NotificationCard = ({ notification, darkMode }) => {
         color: textColor,
         padding: "15px 20px",
         borderRadius: "12px",
-        boxShadow: darkMode ? "0 2px 6px rgba(255,255,255,0.08)" : "0 2px 6px rgba(0,0,0,0.08)",
+        boxShadow: darkMode
+          ? "0 2px 6px rgba(255,255,255,0.08)"
+          : "0 2px 6px rgba(0,0,0,0.08)",
         transition: "transform 0.2s",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
@@ -45,7 +46,9 @@ const NotificationCard = ({ notification, darkMode }) => {
             </small>
           )}
           {notification.category && (
-            <small style={{ marginLeft: "10px", fontStyle: "italic" }}>{notification.category}</small>
+            <small style={{ marginLeft: "10px", fontStyle: "italic" }}>
+              {notification.category}
+            </small>
           )}
         </div>
       </div>
@@ -55,7 +58,6 @@ const NotificationCard = ({ notification, darkMode }) => {
 
 const NotificationPage = () => {
   const { darkMode } = useTheme();
-
   const [notifications, setNotifications] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -87,7 +89,6 @@ const NotificationPage = () => {
   // Generate notifications dynamically
   const generateNotifications = () => {
     const notifs = [];
-
     const totalSpent = transactions
       .filter((t) => t.type === "expense")
       .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -135,7 +136,6 @@ const NotificationPage = () => {
     setNotifications(notifs);
   };
 
-  // Fetch data on mount
   useEffect(() => {
     const fetchData = async () => {
       await fetchTransactions();
@@ -144,61 +144,100 @@ const NotificationPage = () => {
     fetchData();
   }, []);
 
-  // Regenerate notifications when transactions or budget change
   useEffect(() => {
     generateNotifications();
   }, [transactions, totalBudget]);
 
   const filteredNotifications =
-    filterType === "All" ? notifications : notifications.filter((n) => n.type === filterType);
+    filterType === "All"
+      ? notifications
+      : notifications.filter((n) => n.type === filterType);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", width: "100vw" }}>
       <Sidebar />
       <div
         style={{
           flex: 1,
-          padding: "30px",
           background: darkMode ? "#121212" : "#f9fafb",
           color: darkMode ? "#e0e0e0" : "#333",
-          width: "1100px",
-          marginLeft: "300px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "30px",
+          overflowY: "auto",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px", color: darkMode ? "#e0e0e0" : "#1f2937" }}>
-          Notifications
-        </h2>
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "700px",
+            background: darkMode ? "#1f1f1f" : "#fff",
+            padding: "40px",
+            borderRadius: "12px",
+            boxShadow: darkMode
+              ? "0 10px 25px rgba(0,0,0,0.6)"
+              : "0 10px 25px rgba(0,0,0,0.08)",
+            borderTop: "4px solid #2563eb",
+          }}
+        >
+          <h2
+            style={{
+              textAlign: "center",
+              marginBottom: "25px",
+              color: darkMode ? "#e0e0e0" : "#1f2937",
+            }}
+          >
+            Notifications
+          </h2>
 
-        {/* Filter Buttons */}
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "20px" }}>
-          {["All", "info", "warning", "danger"].map((type) => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: filterType === type ? "2px solid #2563eb" : "1px solid #ccc",
-                background: filterType === type ? "#2563eb" : "#fff",
-                color: filterType === type ? "#fff" : "#333",
-                cursor: "pointer",
-                fontWeight: "500",
-              }}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
-        </div>
+          {/* Filter Buttons */}
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "center",
+              marginBottom: "20px",
+              flexWrap: "wrap",
+            }}
+          >
+            {["All", "info", "warning", "danger"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setFilterType(type)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  border:
+                    filterType === type ? "2px solid #2563eb" : "1px solid #ccc",
+                  background: filterType === type ? "#2563eb" : "#fff",
+                  color: filterType === type ? "#fff" : "#333",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  transition: "0.2s",
+                }}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
 
-        {/* Notification List */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {filteredNotifications.length === 0 ? (
-            <p style={{ textAlign: "center", color: "#6b7280" }}>No notifications 🎉</p>
-          ) : (
-            filteredNotifications.map((n) => (
-              <NotificationCard key={n.id} notification={n} darkMode={darkMode} />
-            ))
-          )}
+          {/* Notification List */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {filteredNotifications.length === 0 ? (
+              <p style={{ textAlign: "center", color: "#6b7280" }}>
+                No notifications 🎉
+              </p>
+            ) : (
+              filteredNotifications.map((n) => (
+                <NotificationCard
+                  key={n.id}
+                  notification={n}
+                  darkMode={darkMode}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

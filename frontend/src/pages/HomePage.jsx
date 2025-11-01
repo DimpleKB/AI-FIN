@@ -118,24 +118,35 @@ const HomePage = () => {
   const types = ["income", "expense"];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "Poppins, sans-serif", width: "1500px" }}>
-      <Sidebar darkMode />
-
-      <div style={{
-        flex: 1,
-        padding: "30px",
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        fontFamily: "Poppins, sans-serif",
         background: darkMode ? "#121212" : "#f9fafb",
         color: darkMode ? "#e0e0e0" : "#333",
-        overflowY: "auto",
-        marginLeft: "300px"
-      }}>
+      }}
+    >
+      <Sidebar darkMode />
+
+      {/* Main Content (no left margin now) */}
+      <div
+        style={{
+          flex: 1,
+          padding: "30px",
+          overflowY: "auto",
+          transition: "all 0.3s ease",
+        }}
+      >
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h1 style={{ fontSize: "26px", fontWeight: "600", marginBottom: "5px" }}>
               Welcome back, {user?.username || "User"} 👋
             </h1>
-            <p style={{ color: darkMode ? "#aaa" : "#666", marginBottom: "20px" }}>Here’s your financial snapshot.</p>
+            <p style={{ color: darkMode ? "#aaa" : "#666", marginBottom: "20px" }}>
+              Here’s your financial snapshot.
+            </p>
           </div>
           <button
             onClick={() => navigate("/addTransaction")}
@@ -154,23 +165,42 @@ const HomePage = () => {
         </div>
 
         {/* Monthly Spending Progress */}
-        <div style={{
-          background: darkMode ? "#1f1f1f" : "#fff",
-          padding: "20px",
-          borderRadius: "12px",
-          marginBottom: "20px",
-          boxShadow: darkMode ? "0 2px 6px rgba(0,0,0,0.6)" : "0 2px 6px rgba(0,0,0,0.08)"
-        }}>
+        <div
+          style={{
+            background: darkMode ? "#1f1f1f" : "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            marginBottom: "20px",
+            boxShadow: darkMode
+              ? "0 2px 6px rgba(0,0,0,0.6)"
+              : "0 2px 6px rgba(0,0,0,0.08)",
+          }}
+        >
           <h3 style={{ marginBottom: "10px" }}>Monthly Spending Progress</h3>
-          <div style={{ background: darkMode ? "#333" : "#eee", borderRadius: "10px", overflow: "hidden", height: "20px" }}>
-            <div style={{
-              width: `${spendingPercent}%`,
-              background: spendingPercent >= 100 ? "#dc2626" : "#16a34a",
-              height: "100%",
-              transition: "width 0.3s",
-            }} />
+          <div
+            style={{
+              background: darkMode ? "#333" : "#eee",
+              borderRadius: "10px",
+              overflow: "hidden",
+              height: "20px",
+            }}
+          >
+            <div
+              style={{
+                width: `${spendingPercent}%`,
+                background: spendingPercent >= 100 ? "#dc2626" : "#16a34a",
+                height: "100%",
+                transition: "width 0.3s",
+              }}
+            />
           </div>
-          <p style={{ marginTop: "5px", fontWeight: "500", color: spendingPercent >= 100 ? "#dc2626" : "#16a34a" }}>
+          <p
+            style={{
+              marginTop: "5px",
+              fontWeight: "500",
+              color: spendingPercent >= 100 ? "#dc2626" : "#16a34a",
+            }}
+          >
             {spendingPercent.toFixed(2)}% of income spent
           </p>
         </div>
@@ -183,16 +213,20 @@ const HomePage = () => {
         </div>
 
         {/* Filters */}
-        <div style={{
-          display: "flex",
-          gap: "15px",
-          alignItems: "center",
-          marginBottom: "20px",
-          background: darkMode ? "#1f1f1f" : "#fff",
-          padding: "15px",
-          borderRadius: "10px",
-          boxShadow: darkMode ? "0 2px 6px rgba(0,0,0,0.6)" : "0 2px 6px rgba(0,0,0,0.05)"
-        }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "15px",
+            alignItems: "center",
+            marginBottom: "20px",
+            background: darkMode ? "#1f1f1f" : "#fff",
+            padding: "15px",
+            borderRadius: "10px",
+            boxShadow: darkMode
+              ? "0 2px 6px rgba(0,0,0,0.6)"
+              : "0 2px 6px rgba(0,0,0,0.05)",
+          }}
+        >
           <h3 style={{ margin: 0 }}>Filter By:</h3>
 
           <select name="month" onChange={handleFilterChange} value={filter.month} style={filterSelectStyle(darkMode)}>
@@ -211,31 +245,46 @@ const HomePage = () => {
           </select>
 
           <CSVLink data={filtered} filename="transactions.csv">
-            <button style={{ ...filterSelectStyle(darkMode), background: "#2563eb", color: "white", marginLeft: "auto" }}>
+            <button
+              style={{
+                ...filterSelectStyle(darkMode),
+                background: "#2563eb",
+                color: "white",
+                marginLeft: "auto",
+              }}
+            >
               ⬇️ Export CSV
             </button>
           </CSVLink>
         </div>
 
         {/* Transactions Table */}
-        <div style={{
-          background: darkMode ? "#1f1f1f" : "#fff",
-          padding: "20px",
-          borderRadius: "12px",
-          boxShadow: darkMode ? "0 2px 6px rgba(0,0,0,0.6)" : "0 2px 6px rgba(0,0,0,0.1)"
-        }}>
+        <div
+          style={{
+            background: darkMode ? "#1f1f1f" : "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: darkMode
+              ? "0 2px 6px rgba(0,0,0,0.6)"
+              : "0 2px 6px rgba(0,0,0,0.1)",
+          }}
+        >
           <h3 style={{ fontWeight: "500", marginBottom: "15px" }}>Recent Transactions</h3>
-          <table style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            background: darkMode ? "#1f1f1f" : "#fff"
-          }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              background: darkMode ? "#1f1f1f" : "#fff",
+            }}
+          >
             <thead>
-              <tr style={{
-                color: darkMode ? "#bbb" : "#555",
-                textAlign: "left",
-                borderBottom: `2px solid ${darkMode ? "#333" : "#ddd"}`
-              }}>
+              <tr
+                style={{
+                  color: darkMode ? "#bbb" : "#555",
+                  textAlign: "left",
+                  borderBottom: `2px solid ${darkMode ? "#333" : "#ddd"}`,
+                }}
+              >
                 <th style={thStyle(darkMode)}>Date</th>
                 <th style={thStyle(darkMode)}>Category</th>
                 <th style={thStyle(darkMode)}>Type</th>
@@ -247,10 +296,18 @@ const HomePage = () => {
               {filtered.map((t) => (
                 <tr key={t.id} style={{ borderBottom: `1px solid ${darkMode ? "#333" : "#eee"}` }}>
                   <td style={tdStyle(darkMode)}>
-                    {editingId === t.id ? <input type="date" name="date" value={editForm.date} onChange={handleEditChange} /> : t.date}
+                    {editingId === t.id ? (
+                      <input type="date" name="date" value={editForm.date} onChange={handleEditChange} />
+                    ) : (
+                      t.date
+                    )}
                   </td>
                   <td style={tdStyle(darkMode)}>
-                    {editingId === t.id ? <input name="category" value={editForm.category} onChange={handleEditChange} /> : t.category}
+                    {editingId === t.id ? (
+                      <input name="category" value={editForm.category} onChange={handleEditChange} />
+                    ) : (
+                      t.category
+                    )}
                   </td>
                   <td style={tdStyle(darkMode)}>
                     {editingId === t.id ? (
@@ -259,30 +316,55 @@ const HomePage = () => {
                         <option value="expense">expense</option>
                       </select>
                     ) : (
-                      <span style={{
-                        background: t.type === "income" ? "#dcfce7" : "#fee2e2",
-                        color: t.type === "income" ? "#16a34a" : "#dc2626",
-                        padding: "4px 10px",
-                        borderRadius: "6px",
-                        fontSize: "13px"
-                      }}>
+                      <span
+                        style={{
+                          background: t.type === "income" ? "#dcfce7" : "#fee2e2",
+                          color: t.type === "income" ? "#16a34a" : "#dc2626",
+                          padding: "4px 10px",
+                          borderRadius: "6px",
+                          fontSize: "13px",
+                        }}
+                      >
                         {t.type}
                       </span>
                     )}
                   </td>
-                  <td style={{ ...tdStyle(darkMode), fontWeight: "600", color: t.type === "income" ? "#16a34a" : "#dc2626" }}>
-                    {editingId === t.id ? <input type="number" name="amount" value={editForm.amount} onChange={handleEditChange} /> : `₹${parseFloat(t.amount).toLocaleString()}`}
+                  <td
+                    style={{
+                      ...tdStyle(darkMode),
+                      fontWeight: "600",
+                      color: t.type === "income" ? "#16a34a" : "#dc2626",
+                    }}
+                  >
+                    {editingId === t.id ? (
+                      <input
+                        type="number"
+                        name="amount"
+                        value={editForm.amount}
+                        onChange={handleEditChange}
+                      />
+                    ) : (
+                      `₹${parseFloat(t.amount).toLocaleString()}`
+                    )}
                   </td>
                   <td style={tdStyle(darkMode)}>
                     {editingId === t.id ? (
                       <>
-                        <button onClick={() => handleSave(t.id)} style={actionBtn("#16a34a")}>💾 Save</button>
-                        <button onClick={() => setEditingId(null)} style={actionBtn("#dc2626")}>❌ Cancel</button>
+                        <button onClick={() => handleSave(t.id)} style={actionBtn("#16a34a")}>
+                          💾 Save
+                        </button>
+                        <button onClick={() => setEditingId(null)} style={actionBtn("#dc2626")}>
+                          ❌ Cancel
+                        </button>
                       </>
                     ) : (
                       <>
-                        <button onClick={() => handleEdit(t)} style={actionBtn("#2563eb")}>✏️ Edit</button>
-                        <button onClick={() => handleDelete(t.id)} style={actionBtn("#dc2626")}>🗑️ Delete</button>
+                        <button onClick={() => handleEdit(t)} style={actionBtn("#2563eb")}>
+                          ✏️ Edit
+                        </button>
+                        <button onClick={() => handleDelete(t.id)} style={actionBtn("#dc2626")}>
+                          🗑️ Delete
+                        </button>
                       </>
                     )}
                   </td>
@@ -291,7 +373,17 @@ const HomePage = () => {
             </tbody>
           </table>
 
-          {filtered.length === 0 && <p style={{ textAlign: "center", color: darkMode ? "#888" : "#888", marginTop: "20px" }}>No transactions found</p>}
+          {filtered.length === 0 && (
+            <p
+              style={{
+                textAlign: "center",
+                color: darkMode ? "#888" : "#888",
+                marginTop: "20px",
+              }}
+            >
+              No transactions found
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -300,15 +392,19 @@ const HomePage = () => {
 
 // ===== Styles =====
 const SummaryCard = ({ title, value, color, darkMode }) => (
-  <div style={{
-    flex: 1,
-    color: darkMode ? "#e0e0e0" : "#333",
-    background: darkMode ? "#1f1f1f" : "white",
-    padding: "20px",
-    borderRadius: "10px",
-    textAlign: "center",
-    boxShadow: darkMode ? "0 2px 6px rgba(0,0,0,0.6)" : "0 2px 6px rgba(0,0,0,0.08)"
-  }}>
+  <div
+    style={{
+      flex: 1,
+      color: darkMode ? "#e0e0e0" : "#333",
+      background: darkMode ? "#1f1f1f" : "white",
+      padding: "20px",
+      borderRadius: "10px",
+      textAlign: "center",
+      boxShadow: darkMode
+        ? "0 2px 6px rgba(0,0,0,0.6)"
+        : "0 2px 6px rgba(0,0,0,0.08)",
+    }}
+  >
     <p style={{ color: darkMode ? "#aaa" : "#555", marginBottom: "8px" }}>{title}</p>
     <p style={{ fontSize: "22px", fontWeight: "600", color }}>{value}</p>
   </div>
@@ -320,11 +416,22 @@ const filterSelectStyle = (darkMode) => ({
   border: `1px solid ${darkMode ? "#444" : "#ccc"}`,
   background: darkMode ? "#2c2c2c" : "white",
   color: darkMode ? "#e0e0e0" : "black",
-  cursor: "pointer"
+  cursor: "pointer",
 });
 
-const thStyle = (darkMode) => ({ padding: "12px", fontWeight: "600", fontSize: "14px", color: darkMode ? "#bbb" : "#555" });
-const tdStyle = (darkMode) => ({ padding: "10px", fontSize: "14px", color: darkMode ? "#e0e0e0" : "#333" });
+const thStyle = (darkMode) => ({
+  padding: "12px",
+  fontWeight: "600",
+  fontSize: "14px",
+  color: darkMode ? "#bbb" : "#555",
+});
+
+const tdStyle = (darkMode) => ({
+  padding: "10px",
+  fontSize: "14px",
+  color: darkMode ? "#e0e0e0" : "#333",
+});
+
 const actionBtn = (bg) => ({
   background: bg,
   color: "#fff",
@@ -333,7 +440,7 @@ const actionBtn = (bg) => ({
   padding: "6px 10px",
   marginRight: "6px",
   cursor: "pointer",
-  fontSize: "13px"
+  fontSize: "13px",
 });
 
 export default HomePage;

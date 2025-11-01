@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import { API_BASE_URL } from "../config";
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +16,6 @@ function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: username, password }),
       });
-
 
       const data = await res.json();
 
@@ -35,28 +34,37 @@ function Login() {
   };
 
   return (
-    <div className="container">
-      <h2>Login</h2>
-      <form className="frm" onSubmit={handleSubmit}>
-        <p>Email</p>
-        <input
-          type="text"
-          placeholder="Email"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <p>Password</p>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button className="submit" type="submit">Login</button>
-        <p>Don't have an account? <Link to="/signup">Signup</Link></p>
-      </form>
+    <div className="login-page">
+      <div className="login-box">
+        <h2>Login</h2>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label>Email</label>
+          <input style={{background:"#ccc",color:"black"}}
+            type="text"
+            placeholder="Email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+
+          <label>Password</label>
+          <input style={{background:"#ccc",color:"black"}}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button className="login-btn" type="submit">
+            Login
+          </button>
+
+          <p className="signup-text">
+            Don't have an account? <Link to="/signup">Signup</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
