@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setUser, setCurrentUserId } = useUser();
@@ -14,11 +14,10 @@ function Login() {
       const res = await fetch("https://backend-nk1t.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
-
       if (res.ok) {
         setUser({ email: data.email, userId: data.userId });
         setCurrentUserId(data.userId);
@@ -29,7 +28,7 @@ function Login() {
       }
     } catch (err) {
       console.error(err);
-      alert("Server error");
+      alert("❌ Server error");
     }
   };
 
@@ -39,18 +38,18 @@ function Login() {
         <h2>Login</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <label>Email</label>
-          <input style={{background:"#ccc",color:"black"}}
-            type="text"
-            placeholder="Email"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
           <label>Password</label>
-          <input style={{background:"#ccc",color:"black"}}
+          <input
             type="password"
-            placeholder="Password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

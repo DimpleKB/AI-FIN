@@ -10,12 +10,10 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== confirm) {
       alert("❌ Passwords do not match!");
       return;
     }
-
     try {
       const res = await fetch("https://backend-nk1t.onrender.com/signup", {
         method: "POST",
@@ -24,7 +22,6 @@ function Signup() {
       });
 
       const data = await res.json();
-
       if (res.ok) {
         localStorage.setItem("userId", data.userId);
         alert("✅ Signup successful! You are now logged in.");
@@ -44,7 +41,7 @@ function Signup() {
         <h2>Signup</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <label>Username</label>
-          <input style={{background:"#ccc",color:"black"}}
+          <input
             type="text"
             placeholder="Enter your username"
             value={username}
@@ -53,7 +50,7 @@ function Signup() {
           />
 
           <label>Email</label>
-          <input style={{background:"#ccc",color:"black"}}
+          <input
             type="email"
             placeholder="Enter your email"
             value={email}
@@ -62,7 +59,7 @@ function Signup() {
           />
 
           <label>Password</label>
-          <input style={{background:"#ccc",color:"black"}}
+          <input
             type="password"
             placeholder="Enter your password"
             value={password}
@@ -71,7 +68,7 @@ function Signup() {
           />
 
           <label>Confirm Password</label>
-          <input style={{background:"#ccc",color:"black"}}
+          <input
             type="password"
             placeholder="Confirm your password"
             value={confirm}

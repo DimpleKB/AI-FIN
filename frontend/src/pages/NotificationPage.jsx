@@ -62,9 +62,19 @@ const NotificationPage = () => {
   const [totalBudget, setTotalBudget] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [filterType, setFilterType] = useState("All");
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 768);
   const userId = localStorage.getItem("userId");
 
-  // Fetch transactions
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) setShowSidebar(false);
+      else setShowSidebar(true);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const fetchTransactions = async () => {
     try {
       const res = await fetch(`https://backend-nk1t.onrender.com/api/transactions/${userId}`);
@@ -75,7 +85,6 @@ const NotificationPage = () => {
     }
   };
 
-  // Fetch total budget
   const fetchTotalBudget = async () => {
     try {
       const res = await fetch(`https://backend-nk1t.onrender.com/api/totalBudget/${userId}`);
@@ -86,7 +95,6 @@ const NotificationPage = () => {
     }
   };
 
-  // Generate notifications dynamically
   const generateNotifications = () => {
     const notifs = [];
     const totalSpent = transactions
@@ -119,7 +127,6 @@ const NotificationPage = () => {
       }
     }
 
-    // Large transactions notifications
     transactions.forEach((t) => {
       if (t.type === "expense" && parseFloat(t.amount) > 1000) {
         notifs.push({
@@ -154,53 +161,24 @@ const NotificationPage = () => {
       : notifications.filter((n) => n.type === filterType);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", width: "100vw" }}>
-      <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          background: darkMode ? "#121212" : "#f9fafb",
-          color: darkMode ? "#e0e0e0" : "#333",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "30px",
-          overflowY: "auto",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "700px",
-            background: darkMode ? "#1f1f1f" : "#fff",
-            padding: "40px",
-            borderRadius: "12px",
-            boxShadow: darkMode
-              ? "0 10px 25px rgba(0,0,0,0.6)"
-              : "0 10px 25px rgba(0,0,0,0.08)",
-            borderTop: "4px solid #2563eb",
-          }}
-        >
-          <h2
-            style={{
-              textAlign: "center",
-              marginBottom: "25px",
-              color: darkMode ? "#e0e0e0" : "#1f2937",
-            }}
+    <div style={{ display: "flex", width: "100%", minHeight: "100vh" }}>
+      {showSidebar && <div style={{ flexShrink: 0, width: 250, borderRight: darkMode ? "1px solid #333" : "1px solid #ddd" }}><Sidebar darkMode /></div>}
+
+      <div style={{ flex: 1, minWidth: 0, padding: "20px", display: "flex", flexDirection: "column", gap: "20px", color: darkMode ? "#e0e0e0" : "#333" }}>
+        {!showSidebar && (
+          <button
+            onClick={() => setShowSidebar(true)}
+            style={{ marginBottom: "10px", padding: "8px 12px", borderRadius: "6px", background: "#2563eb", color: "#fff", border: "none", cursor: "pointer", alignSelf: "flex-start" }}
           >
-            Notifications
-          </h2>
+            ☰ Menu
+          </button>
+        )}
+
+        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <h2 style={{ textAlign: "center", color: darkMode ? "#e0e0e0" : "#1f2937" }}>Notifications</h2>
 
           {/* Filter Buttons */}
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              justifyContent: "center",
-              marginBottom: "20px",
-              flexWrap: "wrap",
-            }}
-          >
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
             {["All", "info", "warning", "danger"].map((type) => (
               <button
                 key={type}
@@ -208,12 +186,11 @@ const NotificationPage = () => {
                 style={{
                   padding: "8px 16px",
                   borderRadius: "8px",
-                  border:
-                    filterType === type ? "2px solid #2563eb" : "1px solid #ccc",
+                  border: filterType === type ? "2px solid #2563eb" : "1px solid #ccc",
                   background: filterType === type ? "#2563eb" : "#fff",
                   color: filterType === type ? "#fff" : "#333",
                   cursor: "pointer",
-                  fontWeight: "500",
+                  fontWeight: 500,
                   transition: "0.2s",
                 }}
               >
@@ -225,17 +202,9 @@ const NotificationPage = () => {
           {/* Notification List */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {filteredNotifications.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#6b7280" }}>
-                No notifications 🎉
-              </p>
+              <p style={{ textAlign: "center", color: "#6b7280" }}>No notifications 🎉</p>
             ) : (
-              filteredNotifications.map((n) => (
-                <NotificationCard
-                  key={n.id}
-                  notification={n}
-                  darkMode={darkMode}
-                />
-              ))
+              filteredNotifications.map((n) => <NotificationCard key={n.id} notification={n} darkMode={darkMode} />)
             )}
           </div>
         </div>

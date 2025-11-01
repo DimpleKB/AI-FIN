@@ -16,11 +16,19 @@ const BudgetPage = () => {
   const [editingBudgetId, setEditingBudgetId] = useState(null);
   const [editForm, setEditForm] = useState({ category: "", amount: "" });
   const [loading, setLoading] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 768);
 
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
   const monthName = now.toLocaleString("default", { month: "long" });
+
+  // Handle responsive sidebar
+  useEffect(() => {
+    const handleResize = () => setShowSidebar(window.innerWidth >= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!userId || isNaN(userId)) return;
@@ -70,17 +78,13 @@ const BudgetPage = () => {
   const overallProgress = totalBudget ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
 
   // ====== CRUD Handlers ======
-
   const handleAddBudget = async () => {
     if (!form.category || !form.amount) return alert("All fields are required!");
     try {
       const res = await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category: form.category,
-          amount: parseFloat(form.amount),
-        }),
+        body: JSON.stringify({ category: form.category, amount: parseFloat(form.amount) }),
       });
       const data = await res.json();
       setBudgets([...budgets, data.budget]);
@@ -94,14 +98,11 @@ const BudgetPage = () => {
   const handleSetTotalBudget = async () => {
     if (!totalBudgetInput) return alert("Enter total budget!");
     try {
-      const res = await fetch(
-        `https://backend-nk1t.onrender.com/api/totalBudget/${userId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ totalBudget: parseFloat(totalBudgetInput) }),
-        }
-      );
+      const res = await fetch(`https://backend-nk1t.onrender.com/api/totalBudget/${userId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ totalBudget: parseFloat(totalBudgetInput) }),
+      });
       const data = await res.json();
       setTotalBudget(Number(data.totalBudget));
       setTotalBudgetInput("");
@@ -113,9 +114,7 @@ const BudgetPage = () => {
 
   const handleDeleteBudget = async (id) => {
     try {
-      await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}/${id}`, { method: "DELETE" });
       setBudgets(budgets.filter((b) => b.id !== id));
     } catch (err) {
       console.error(err);
@@ -134,10 +133,7 @@ const BudgetPage = () => {
       const res = await fetch(`https://backend-nk1t.onrender.com/api/budgets/${userId}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category: editForm.category,
-          amount: parseFloat(editForm.amount),
-        }),
+        body: JSON.stringify({ category: editForm.category, amount: parseFloat(editForm.amount) }),
       });
       const data = await res.json();
       setBudgets(budgets.map((b) => (b.id === id ? data.budget : b)));
@@ -148,35 +144,51 @@ const BudgetPage = () => {
     }
   };
 
-  // ====== UI ======
-
   return (
-    <div style={{ display: "flex", minHeight: "100%", width: "100vw" }}>
-      <Sidebar />
+    <div style={{ display: "flex", width: "100vw", minHeight: "100vh" }}>
+      {showSidebar && <Sidebar />}
 
       <div
         style={{
           flex: 1,
-          padding: "40px",
+          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
           background: darkMode ? "#121212" : "#f9fafb",
           color: darkMode ? "#e0e0e0" : "#333",
           overflowY: "auto",
         }}
       >
+        {!showSidebar && (
+          <button
+            onClick={() => setShowSidebar(true)}
+            style={{
+              marginBottom: "10px",
+              padding: "8px 12px",
+              borderRadius: "6px",
+              background: "#2563eb",
+              color: "#fff",
+              border: "none",
+              cursor: "pointer",
+              alignSelf: "flex-start",
+            }}
+          >
+            ☰ Menu
+          </button>
+        )}
+
         <div
           style={{
+            width: "100%",
             maxWidth: "900px",
             margin: "0 auto",
-            background: darkMode ? "#1f1f1f" : "#fff",
-            padding: "40px",
-            borderRadius: "12px",
-            boxShadow: darkMode
-              ? "0 10px 25px rgba(0,0,0,0.6)"
-              : "0 10px 25px rgba(0,0,0,0.08)",
-            borderTop: "4px solid #3498db",
+            display: "flex",
+            flexDirection: "column",
+            gap: "25px",
           }}
         >
-          <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#3498db" }}>
+          <h2 style={{ textAlign: "center", marginBottom: "10px", color: "#3498db" }}>
             {monthName} Budget Dashboard
           </h2>
 
@@ -184,9 +196,7 @@ const BudgetPage = () => {
           {totalBudget > 0 && (
             <div style={cardStyle(darkMode)}>
               <h3 style={sectionTitle}>Total Spending Progress</h3>
-              <p>
-                Spent: ₹{totalSpent} / ₹{totalBudget}
-              </p>
+              <p>Spent: ₹{totalSpent} / ₹{totalBudget}</p>
               <div style={progressOuter}>
                 <div
                   style={{
@@ -247,14 +257,7 @@ const BudgetPage = () => {
             {budgets.length === 0 ? (
               <p>No budgets yet.</p>
             ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "20px",
-                  justifyContent: "center",
-                }}
-              >
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
                 {budgets.map((b) => {
                   const spent = calculateSpent(b.category);
                   const progress = Math.min((spent / b.amount) * 100, 100);
@@ -264,13 +267,7 @@ const BudgetPage = () => {
                     <div
                       key={b.id}
                       style={{
-                        background: overBudget
-                          ? darkMode
-                            ? "#3e1f1f"
-                            : "#ffe6e6"
-                          : darkMode
-                          ? "#1f1f1f"
-                          : "#e8f8f5",
+                        background: overBudget ? (darkMode ? "#3e1f1f" : "#ffe6e6") : darkMode ? "#1f1f1f" : "#e8f8f5",
                         borderRadius: "12px",
                         padding: "20px",
                         width: "260px",
@@ -278,36 +275,23 @@ const BudgetPage = () => {
                       }}
                     >
                       {editingBudgetId === b.id ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "10px",
-                          }}
-                        >
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                           <input
                             value={editForm.category}
-                            onChange={(e) =>
-                              setEditForm({ ...editForm, category: e.target.value })
-                            }
+                            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
                             style={inputStyle(darkMode)}
                           />
                           <input
                             type="number"
                             value={editForm.amount}
-                            onChange={(e) =>
-                              setEditForm({ ...editForm, amount: e.target.value })
-                            }
+                            onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
                             style={inputStyle(darkMode)}
                           />
                           <div style={{ display: "flex", gap: "10px" }}>
                             <button onClick={() => handleSaveBudget(b.id)} style={greenBtn}>
                               Save
                             </button>
-                            <button
-                              onClick={() => setEditingBudgetId(null)}
-                              style={blueBtn}
-                            >
+                            <button onClick={() => setEditingBudgetId(null)} style={blueBtn}>
                               Cancel
                             </button>
                           </div>
@@ -336,10 +320,7 @@ const BudgetPage = () => {
                             <button onClick={() => handleEditBudget(b)} style={blueBtn}>
                               Edit
                             </button>
-                            <button
-                              onClick={() => handleDeleteBudget(b.id)}
-                              style={redBtn}
-                            >
+                            <button onClick={() => handleDeleteBudget(b.id)} style={redBtn}>
                               Delete
                             </button>
                           </div>
@@ -388,15 +369,8 @@ const blueBtn = {
   fontWeight: "600",
 };
 
-const greenBtn = {
-  ...blueBtn,
-  background: "#27ae60",
-};
-
-const redBtn = {
-  ...blueBtn,
-  background: "#e74c3c",
-};
+const greenBtn = { ...blueBtn, background: "#27ae60" };
+const redBtn = { ...blueBtn, background: "#e74c3c" };
 
 const progressOuter = {
   background: "#f0f0f0",
@@ -407,16 +381,7 @@ const progressOuter = {
   border: "2px solid black",
 };
 
-const progressInner = {
-  height: "100%",
-  transition: "width 0.3s",
-};
-
-const sectionTitle = {
-  fontSize: "18px",
-  fontWeight: "700",
-  marginBottom: "15px",
-  color: "#2f80ed",
-};
+const progressInner = { height: "100%", transition: "width 0.3s" };
+const sectionTitle = { fontSize: "18px", fontWeight: "700", marginBottom: "15px", color: "#2f80ed" };
 
 export default BudgetPage;
