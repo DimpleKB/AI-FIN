@@ -197,6 +197,7 @@ section {
 }
 
 @media (max-width: 600px) {
+  .logo {font-size: 2rem;}
   .hero-content h1 { font-size: 1.8rem; }
   .hero-content p { font-size: 0.95rem; }
   .feature-card h3 { font-size: 1.1rem; }
